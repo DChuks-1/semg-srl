@@ -1,0 +1,7 @@
+project_root: .
+data:
+  raw: data/raw
+  interim: data/interim
+  processed: data/processed
+reports:
+  figures: reports/figures

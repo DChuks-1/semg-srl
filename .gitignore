@@ -1,0 +1,30 @@
+
+### `.gitignore`
+```gitignore
+# Python
+__pycache__/
+*.py[cod]
+.venv/
+.env
+*.log
+
+# Python build / packaging
+*.egg-info/
+*.dist-info/
+build/
+dist/
+
+# VS Code
+.vscode/
+*.code-workspace
+
+# Data & outputs (kept local; not committed)
+data/raw/
+data/interim/
+data/processed/
+models/
+reports/figures/
+
+# OS
+.DS_Store
+Thumbs.db

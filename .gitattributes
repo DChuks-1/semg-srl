@@ -1,0 +1,16 @@
+* text=auto
+
+# Force LF for source/config/docs
+*.py  text eol=lf
+*.toml text eol=lf
+*.yml  text eol=lf
+*.yaml text eol=lf
+*.md  text eol=lf
+*.gitignore text eol=lf
+*.gitattributes text eol=lf
+
+# Binary stays untouched
+*.png binary
+*.jpg binary
+*.pdf binary
+*.pkl binary

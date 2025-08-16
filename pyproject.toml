@@ -1,0 +1,22 @@
+[build-system]
+requires = ["setuptools>=68", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "semg-srl"
+version = "0.1.0"
+description = "sEMG pipeline for gesture classification + fatigue monitoring (simulation-ready)"
+readme = "README.md"
+requires-python = ">=3.10"
+dependencies = [
+  "numpy>=1.24",
+  "scipy>=1.10",
+  "scikit-learn>=1.3",
+  "matplotlib>=3.8",
+  "pandas>=2.2",
+  "pyyaml>=6.0",
+  "tqdm>=4.66",
+]
+
+[tool.setuptools.packages.find]
+where = ["src"]
