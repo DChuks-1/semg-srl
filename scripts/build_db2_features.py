@@ -3,12 +3,50 @@ from pathlib import Path
 import numpy as np
 import pandas as pd
 import yaml
+import re
 
 from semg_srl.io.ninapro_db2 import load_db2_subject
 from semg_srl.preprocess.filtering import preprocess_emg
 from semg_srl.preprocess.windowing import sliding_windows_with_index
 from semg_srl.features.timefreq import build_feature_matrix
 from collections import Counter
+
+def _read_yaml(path):
+    with open(path, "r", encoding="utf-8") as f:
+        return yaml.safe_load(f)
+
+def _name_to_id_map(cfg_lbl_path: str, exercise: int):
+    """Build name->id map for E<exercise> from YAML (case-insensitive)."""
+    y = _read_yaml(cfg_lbl_path)
+    key = f"E{exercise}"
+    if key not in y:
+        return {}
+    # YAML is code:int -> name:str
+    name2id = {}
+    for code, name in y[key].items():
+        if name is None:
+            continue
+        name2id[str(name).strip().lower()] = int(code)
+    return name2id
+
+_code_pat = re.compile(r"^code_(\d+)$", re.IGNORECASE)
+
+def _names_to_ids(names, name2id):
+    """Vectorised: map label_name -> label_id using YAML; fallback for 'code_XX'."""
+    out = []
+    for n in names:
+        if n is None or (isinstance(n, float) and np.isnan(n)):
+            out.append(np.nan); continue
+        s = str(n).strip()
+        k = s.lower()
+        if k in name2id:
+            out.append(name2id[k]); continue
+        m = _code_pat.match(k)
+        if m:
+            out.append(int(m.group(1))); continue
+        # unknown -> NaN (will be dropped downstream if needed)
+        out.append(np.nan)
+    return np.array(out, dtype=float)
 
 def _mode_ignore_nan(a):
     """
@@ -166,6 +204,17 @@ def main():
                 print(f"[WARN] {sid} E{ex}: no valid windows after trimming/majority — skipped.")
                 continue
 
+            # 3c) ensure we have numeric label_id; reconstruct from names if needed
+            if y is None and y_name is not None:
+                name2id = _name_to_id_map(args.cfg_lbl, ex)
+                y = _names_to_ids(y_name, name2id)  # may contain NaNs if some names unknown
+
+
+
+            if windows.shape[0] == 0:
+                print(f"[WARN] {sid} E{ex}: no valid windows after trimming/majority — skipped.")
+                continue
+
             # 4) features
             X, cols = build_feature_matrix(windows, fs=fs)
 
@@ -182,6 +231,10 @@ def main():
                 df["label_name"] = y_name
             if y_rep is not None:
                 df["repetition"] = y_rep
+
+            # Drop rows where label_id is NaN if present (keeps dataset clean)
+            if "label_id" in df.columns:
+                df = df.dropna(subset=["label_id"])
 
             # 6) save
             out_path = outdir / f"{sid}_E{ex}_win{args.win_ms}_ov{int(args.overlap*100)}.csv"
