@@ -1,16 +1,46 @@
-# Map stimulus codes -> human-readable names (example placeholders; we will confirm from files)
+# DB2 mapping (Exercises B/C). E1 == B (17 moves), E2 == C (23 grasps)
 E1:
-  1: "hand_open"
-  2: "hand_close"
-  3: "wrist_flexion"
-  4: "wrist_extension"
-  5: "wrist_pronation"
-  6: "wrist_supination"
-  0: "rest"
+  0: rest
+  1: thumb_up
+  2: index_middle_extension_others_flexed
+  3: flexion_ring_and_little_others_extension
+  4: thumb_to_base_little
+  5: fingers_abduction
+  6: fist
+  7: index_pointing
+  8: fingers_adduction
+  9: wrist_supination_midaxis
+  10: wrist_pronation_midaxis
+  11: wrist_supination_littleaxis
+  12: wrist_pronation_littleaxis
+  13: wrist_flexion
+  14: wrist_extension
+  15: wrist_radial_deviation
+  16: wrist_ulnar_deviation
+  17: wrist_extension_closed_hand
 
 E2:
-  1: "cylindrical_grasp"
-  2: "spherical_grasp"
-  3: "lateral_pinch"
-  4: "tripod_pinch"
-  0: "rest"
+  0: rest
+  1: large_diameter_grasp
+  2: small_diameter_grasp_power
+  3: fixed_hook_grasp
+  4: index_extension_grasp
+  5: medium_wrap
+  6: ring_grasp
+  7: prismatic_four_fingers
+  8: stick_grasp
+  9: writing_tripod_grasp
+  10: power_sphere_grasp
+  11: three_finger_sphere_grasp
+  12: precision_sphere_grasp
+  13: tripod_grasp
+  14: prismatic_pinch_grasp
+  15: tip_pinch_grasp
+  16: quadpod_grasp
+  17: lateral_grasp
+  18: parallel_extension_grasp
+  19: extension_type_grasp
+  20: power_disk_grasp
+  21: open_bottle_tripod
+  22: turn_screw_stick_grasp
+  23: cut_with_knife_index_extension
