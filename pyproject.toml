@@ -16,6 +16,8 @@ dependencies = [
   "pandas>=2.2",
   "pyyaml>=6.0",
   "tqdm>=4.66",
+  "h5py>=3.10",
+
 ]
 
 [tool.setuptools.packages.find]

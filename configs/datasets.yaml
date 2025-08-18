@@ -1,0 +1,6 @@
+db2:
+  root: "data/raw/db2"
+  # Use the subject IDs you actually have:
+  subjects: ["S01","S03","S06","S09","S12","S15","S18","S21","S24","S27","S30","S33","S37","S40"]
+  exercises: [1, 2]   # keep to E1/E2 for now (SRL-relevant)
+  fs_hz: 2000         # DB2 EMG sampling rate (per your thesis text)

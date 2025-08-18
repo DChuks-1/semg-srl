@@ -1,0 +1,16 @@
+# Map stimulus codes -> human-readable names (example placeholders; we will confirm from files)
+E1:
+  1: "hand_open"
+  2: "hand_close"
+  3: "wrist_flexion"
+  4: "wrist_extension"
+  5: "wrist_pronation"
+  6: "wrist_supination"
+  0: "rest"
+
+E2:
+  1: "cylindrical_grasp"
+  2: "spherical_grasp"
+  3: "lateral_pinch"
+  4: "tripod_pinch"
+  0: "rest"
