@@ -38,6 +38,22 @@ def _map_label(c):
     # direct string key (covers '6')
     return LABEL_MAP.get(s, s)
 
+def _auto_weights_from_csv(csv_path: Path):
+    """
+    Reads reports/loso_benchmark_all.csv and derives weights for (svm_rbf, rf, mlp)
+    from their median macro-F1. Falls back to equal weights if unavailable.
+    """
+    try:
+        dfw = pd.read_csv(csv_path)
+        take = dfw[dfw["clf"].isin(["svm_rbf", "rf", "mlp"])]
+        med = take.groupby("clf")["f1_macro"].median().reindex(["svm_rbf", "rf", "mlp"])
+        med = med.fillna(0.0)
+        s = float(med.sum())
+        if s <= 0:
+            return [1.0, 1.0, 1.0]
+        return (med / s).tolist()
+    except Exception:
+        return [1.0, 1.0, 1.0]
 
 
 def _collect_all(root: Path, subjects=None, exercises=None):
@@ -166,7 +182,10 @@ def main():
             rf  = make_clf("rf")
             mlp = make_clf("mlp")
 
-            ens = SoftVotingEnsemble([svm, rf, mlp])
+            wts = _auto_weights_from_csv(outdir / "loso_benchmark_all.csv")
+            print(f"[ENS] weights (svm_rbf, rf, mlp) = {wts}")
+
+            ens = SoftVotingEnsemble([svm, rf, mlp], weights=wts, calibrate="sigmoid", cv=3)
             ens.fit(Xtr, ytr_enc)
 
             P = ens.predict_proba(Xte)
