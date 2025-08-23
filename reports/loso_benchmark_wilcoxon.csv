@@ -1,1 +1,7 @@
-,p(best=ensemble_soft > clf)
+,p(best=rf > clf)
+ensemble_soft,0.125
+svm_linear,0.125
+logreg,0.125
+svm_rbf,0.125
+mlp,0.125
+lda,0.125
