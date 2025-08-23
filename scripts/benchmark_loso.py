@@ -12,6 +12,34 @@ from scipy.stats import wilcoxon
 
 EXCLUDE_COLS = {"subject","exercise","win_start","win_len","repetition","label_id","label_name"}
 
+# Display names for the 5 selected codes
+LABEL_MAP = {
+    "6":  "Fist",
+    "7":  "Index",
+    "10": "Pronation",
+    "13": "Wrist Flexion",
+    "14": "Wrist Extension",
+}
+
+def _map_label(c):
+    """
+    Robust mapper: handles ints, strings, floats like '6.0', and stray whitespace.
+    Falls back to the original token if not in the map.
+    """
+    s = str(c).strip()
+    # try float→int→str (covers '6.0', '6.000')
+    try:
+        i = int(float(s))
+        key = str(i)
+        if key in LABEL_MAP:
+            return LABEL_MAP[key]
+    except Exception:
+        pass
+    # direct string key (covers '6')
+    return LABEL_MAP.get(s, s)
+
+
+
 def _collect_all(root: Path, subjects=None, exercises=None):
     files = sorted(root.glob("S*_E*_*.csv"))
     df = pd.concat((pd.read_csv(f) for f in files), axis=0, ignore_index=True)
@@ -117,11 +145,15 @@ def main():
                 })
 
                 # Optional CM
-                if not args.no_figs:
-                    from semg_srl.eval.metrics import basic_metrics
-                    b = basic_metrics(yte_enc, yhat, labels_order=list(range(len(classes))))
-                    cm_path = outdir / "figures" / f"cm_loso_bench_{name}_{test_sid}.png"
-                    save_confusion_matrix(b["cm"], classes, f"LOSO {test_sid} {name}", str(cm_path))
+            if not args.no_figs:
+                from semg_srl.eval.metrics import basic_metrics
+                b = basic_metrics(yte_enc, yhat, labels_order=list(range(len(classes))))
+                display_classes = [_map_label(c) for c in classes]
+                cm_path = outdir / "figures" / f"cm_loso_bench_ensemble_soft_{test_sid}.png"
+                print(f"[DBG] classes raw: {list(classes)}")
+                print(f"[DBG] classes mapped: {display_classes}")
+                print(f"[FIG] saving -> {cm_path}")
+                save_confusion_matrix(b["cm"], display_classes, f"LOSO {test_sid} ensemble_soft", str(cm_path))
 
         # Ensemble (prob-capable bases)
         if run_ensemble:
@@ -148,8 +180,13 @@ def main():
             if not args.no_figs:
                 from semg_srl.eval.metrics import basic_metrics
                 b = basic_metrics(yte_enc, yhat, labels_order=list(range(len(classes))))
+                display_classes = [_map_label(c) for c in classes]
                 cm_path = outdir / "figures" / f"cm_loso_bench_ensemble_soft_{test_sid}.png"
-                save_confusion_matrix(b["cm"], classes, f"LOSO {test_sid} ensemble_soft", str(cm_path))
+                print(f"[DBG] classes raw: {list(classes)}")
+                print(f"[DBG] classes mapped: {display_classes}")
+                print(f"[FIG] saving -> {cm_path}")
+                save_confusion_matrix(b["cm"], display_classes, f"LOSO {test_sid} ensemble_soft", str(cm_path))
+
             # === END PATCH ===
 
 

@@ -8,6 +8,7 @@ matplotlib.use("Agg", force=True)
 import matplotlib.pyplot as plt
 
 from textwrap import wrap
+from sklearn.metrics import ConfusionMatrixDisplay
 
 def _prettify_labels(labels, max_chars_per_line: int = 16) -> list[str]:
     """Replace underscores, wrap long labels onto multiple lines."""
